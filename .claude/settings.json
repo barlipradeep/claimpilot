@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"$timestamp = Get-Date -Format 'yyyy-MM-dd-HHmm'; $dir = 'docs/session-logs'; if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }; $sessionId = Get-Content env:CLAUDE_SESSION_ID -ErrorAction SilentlyContinue; if (-not $sessionId) { $sessionId = [guid]::NewGuid().ToString().Substring(0, 8) }; $file = Join-Path $dir \\\"$timestamp-session.md\\\"; @\\\"# Session Export - $timestamp`nSession ID: $sessionId`nClosed: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')`n\\\".Trim() | Out-File -FilePath $file -Encoding UTF8 -Append; echo \\\"Session log created: $file\\\"\"",
+            "statusMessage": "Saving session log...",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
