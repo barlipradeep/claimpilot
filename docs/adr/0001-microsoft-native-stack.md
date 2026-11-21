@@ -11,7 +11,7 @@ ClaimPilot is a side project to build hands-on experience with Azure AI Foundry 
 
 Build the entire stack on Microsoft technologies:
 - **Orchestration:** Azure AI Foundry Agent Service and Microsoft Agent Framework
-- **Models:** Claude via Foundry Model Deployments
+- **Models:** A small model for extraction and a larger one for coverage reasoning, both deployed through Foundry with pinned versions. The specific models are not yet chosen and will be recorded in a later ADR.
 - **Data & Storage:** Azure SQL, Azure Service Bus, Azure Document Intelligence, Azure AI Search
 - **Infrastructure:** Bicep, Azure Container Apps, Azure Key Vault
 - **CI/CD:** GitHub Actions
@@ -31,4 +31,4 @@ Build the entire stack on Microsoft technologies:
 
 ## Notes
 
-Foundry IQ, built on Azure AI Search's agentic retrieval, will be used for policy form retrieval if needed in later iterations. Core week 1–4 work uses standard Azure AI Search APIs.
+Policy form retrieval uses Azure AI Search directly, starting on the Free tier. Foundry IQ is a managed layer built on Azure AI Search's agentic retrieval; whether to adopt it is undecided and will be revisited once the core agent works in week 3.
