@@ -1,6 +1,6 @@
 # Security setup
 
-**Last updated:** 2026-11-16
+**Last updated:** 2026-11-20
 
 This page separates what is in place today from what the project plan commits to building later. Nothing under "Planned" exists yet.
 
@@ -9,29 +9,20 @@ This page separates what is in place today from what the project plan commits to
 ### Identity and access
 
 - **Separate personal tenant.** ClaimPilot runs in its own Microsoft Entra directory and Azure subscription, created from a personal Microsoft account. No employer account, tenant or equipment is involved.
-- **Multi-factor authentication.** Two-step verification is turned on for the personal admin account.
-- **Emergency admin.** A second Global Administrator account lives inside the directory, so losing access to the personal account does not lock the tenant.
+- **Multi-factor authentication.** Two-step verification is turned on for the personal admin account, and its recovery code is stored offline.
+- **Security defaults.** Enabled in Entra ID. Every user in the directory must register an authenticator, admins are prompted for MFA, and legacy sign-in methods are blocked.
+- **Emergency admin.** A second Global Administrator account lives inside the directory, so losing access to the personal account does not lock the tenant. It has an authenticator registered and its credentials are stored offline.
 
 ### Cost and region
 
-- **Budget alert.** A monthly budget of $50 is set on the subscription. A budget only sends alerts; it does not stop resources running.
-- **Resource group.** `rg-claimpilot-dev`, in a US region. All project resources go in this one group.
+- **Budget alert.** A monthly budget of $50 is set on the subscription, with alert thresholds and an email recipient configured. A budget only sends alerts; it does not stop resources running.
+- **Resource group.** `rg-claimpilot-dev` in East US, tagged with `project` and `env`. All project resources go in this one group, and the US region keeps data in the US as the privacy controls require.
 
 ### Repository
 
 - **Ignore rules.** `.gitignore` excludes environment files, key files and local settings.
 - **Session logs stay local.** `docs/session-logs/` is ignored and never pushed.
-
-## To confirm
-
-These were intended in the first session but have not been checked since.
-
-- [ ] Security defaults show as Enabled in Entra ID (Overview → Properties).
-- [ ] The emergency admin has registered an authenticator and its credentials are stored offline.
-- [ ] The recovery code for the personal account is stored offline.
-- [ ] Budget alert thresholds and the email recipient are set as wanted.
-- [ ] The resource group region is East US 2 and it carries the `project` and `env` tags.
-- [ ] GitHub secret scanning, push protection and Dependabot alerts are turned on.
+- **GitHub scanning.** The repository is public, with secret scanning, push protection and Dependabot alerts turned on. Code scanning is left off until there is Python and C# code to analyse.
 
 ## Planned
 
