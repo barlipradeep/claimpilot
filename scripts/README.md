@@ -1,81 +1,33 @@
-# ClaimPilot Scripts
+# Scripts
 
-Helper scripts for managing and maintaining the ClaimPilot project.
+## save-session.ps1
 
-## Session Export Script
+Saves a Claude Code session transcript as Markdown in `docs/session-logs/`. That folder is git-ignored, so the logs stay on your machine.
 
-### `export-session.ps1`
+### Automatic
 
-Exports Claude Code sessions to dated markdown files for version control and documentation.
+A `SessionEnd` hook in `.claude/settings.json` runs the script when a Claude Code session ends, whether it is closed, cleared or the user logs out. Claude Code passes the transcript location to the script, so nothing needs to be done by hand.
 
-**Usage:**
+The hook only loads when Claude Code is started in this repository's folder.
+
+### By hand
 
 ```powershell
-# From the scripts directory
-.\export-session.ps1
+# Save the most recent session started in this project
+.\scripts\save-session.ps1
 
-# Or from project root
-.\scripts\export-session.ps1
-
-# With specific session ID
-.\export-session.ps1 -SessionId "abc123def456"
+# Save a specific session
+.\scripts\save-session.ps1 -TranscriptPath "$env:USERPROFILE\.claude\projects\<project>\<session-id>.jsonl"
 ```
 
-**What it does:**
+### Output
 
-1. Creates `docs/session-logs/` directory if it doesn't exist
-2. Creates a new markdown file with format: `YYYY-MM-DD-HHmm-session.md`
-3. Adds a template with session metadata and instructions
-4. Prints the file path and next steps
+One file per session, named after the session's start time and the first 8 characters of its ID:
 
-**Workflow:**
-
-1. When you finish a session, run the script:
-   ```powershell
-   .\export-session.ps1
-   ```
-
-2. The script creates a dated file like `2026-11-14-1430-session.md` in `docs/session-logs/`
-
-3. In Claude Code:
-   - Select all text in your session transcript (Ctrl+A)
-   - Copy it (Ctrl+C)
-   - Open the markdown file and paste the content after the "Session Content" section
-
-4. Commit the file to git:
-   ```bash
-   git add docs/session-logs/
-   git commit -m "Add session log: YYYY-MM-DD-HHmm"
-   ```
-
-## Automated Session Logging
-
-In addition to manual export, every session is automatically logged by a hook in `.claude/settings.json`:
-
-- **When:** Every time you close a Claude Code session
-- **Where:** `docs/session-logs/` with automatic timestamp
-- **What:** A minimal metadata file with session ID and timestamps
-
-The hook creates a marker file; you then use `export-session.ps1` to add the full transcript.
-
-## Session Logs Directory
-
-All exported sessions go to `docs/session-logs/`:
-- Files are **git-ignored** (see `.gitignore`)
-- Format: `YYYY-MM-DD-HHmm-session.md`
-- Each file contains the session transcript and metadata
-
-Example structure:
 ```
-docs/
-  session-logs/
-    2026-11-14-0900-session.md
-    2026-11-14-1000-session.md
-    2026-11-14-1430-session.md
+docs/session-logs/2026-11-14-1725-session-f0dd9965.md
 ```
 
-## Notes
+Saving the same session again overwrites its file, so a resumed session ends up as one complete log.
 
-- Session logs are **not** committed to git (intentional - they're local reference only)
-- If you want to preserve a session for the team, summarize key points in your ADRs or docs
-- Use sessions logs for personal reference and session history
+The file contains what you and Claude wrote. Tool calls appear as one-line markers such as `[Tool: Edit]`, and tool output and system notes are left out.
